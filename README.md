@@ -3,6 +3,11 @@
 A [friend from school](https://github.com/Ant-28) mentioned wanting to do lazy
 Python and I thought that it would be interesting!
 
+His motivations came from wanting to do some form of lazy *"if-then-else"* and
+so we discussed ways to make this happen.
+
+## An Example:
+
 ```py
 from layzi import lz
 
@@ -32,12 +37,12 @@ d = bar(b + 9)
 if_then_else(True, c, d)
 ```
 
-## Pseudo-Discussion
+## Questions:
 
 <details>
    <summary>What does it mean to be lazy?</summary>
 
-   ...
+   When a value is needed, it is evaluated. 
 
 </details>
 
@@ -59,7 +64,11 @@ if_then_else(True, c, d)
 <details>
    <summary>When should a value be considered to be "needed"?</summary>
 
-   ...
+   A value is needed when we can't be lazy. But isn't this a kind of circular
+   definition? We can be lazy when a value isn't needed, but when a value is
+   needed we can't be lazy.
+
+   
 
 </details>
 
