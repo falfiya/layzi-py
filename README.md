@@ -42,7 +42,7 @@ if_then_else(True, c, d)
 <details>
    <summary>What does it mean to be lazy?</summary>
 
-   When a value is needed, it is evaluated. 
+   When a value is needed, it is evaluated...
 
 </details>
 
@@ -56,7 +56,14 @@ if_then_else(True, c, d)
 <details>
    <summary>Won't this mess with runtime type-checking?</summary>
 
-   Yes, and that's kind of a problem. But there might be a way around it.
+   Yes.
+   ```py
+   x = lz(1)
+   if isinstance(x, int):
+      print("This will never be called :(")
+   ```
+
+   It's unfortunate but there's no way to hook into that behavior.
 
 </details>
 
@@ -68,14 +75,31 @@ if_then_else(True, c, d)
    definition? We can be lazy when a value isn't needed, but when a value is
    needed we can't be lazy.
 
-   
+   In haskell
 
 </details>
 
 <details>
-   <summary>Is it OK to simply store all item accesses via <code>__getitem__</code></summary>
+   <summary>Is it OK to simply store all item accesses via <code>__getitem__</code> and then replay them for real at execution time?</summary>
 
-   No. The answer is no.
+   It's a little more complicated than that. Consider the following code:
+
+   ```py
+   class SomeOtherObject:
+      def __radd__(self, i: int) -> i:
+         return i + 1
+
+   @lz
+   x = 1
+   y = SomeOtherObject()
+
+   z = x + y
+   ```
+
+   Here, when we do x + y, we return a lazy object that assumes `x.__add__` is valid and does not throw `NotImplemented`.
+   So we store `x.__add__(y)` and wait to evaluate it later. But in doing so, we bypass the `SomeOtherObject.__radd__`, which would ordinarily have been called in the event that `int.__add__` returns `NotImplemented`.
+
+   The correct course of action is to be less specific: we remember that `x.__add__` was called, but it probably means that the user intended to use the `+` operator, which is not necessarily the same as `x.__add__`.
 
 </details>
 
