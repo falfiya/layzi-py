@@ -10,31 +10,27 @@ so we discussed ways to make this happen.
 
 ```py
 from layzi import lz
+import random
 
-def if_then_else(cond, true, false):
-   if lz.eval(cond):
-      return lz.eval(true)
-   else:
-      return lz.eval(false)
+x = lz(1.0)
+y = x + 10
 
 @lz
-a = 1
+def foo(bar: float):
+   if bar.is_integer():
+      print("it's an integer!")
+   return bar - 2
 
-b = lz(2) # same thing as above
+@lz
+def ite(cond: bool, true, false):
+   if cond:
+      return true
+   else:
+      return false
 
-def foo(x):
-   print(x)
-   return x + 3
+z = foo(y)
 
-@lz.fn
-def bar(y):
-   print(f"{y}!")
-   return foo(y - 3)
-
-c = lz.fn(foo, a) # have to explicitly use lz.fn since foo is not a lazy function
-d = bar(b + 9)
-
-if_then_else(True, c, d)
+print(ite(random.random() > 0.5, z, y))
 ```
 
 ## Questions:

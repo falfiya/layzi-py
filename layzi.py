@@ -43,12 +43,11 @@ class LzValue(Generic[T]):
    def __call__(self, *args, **kwargs):
       return LzCall(self, args, kwargs)
 
-   # technically we can do better...
-   # def __iter__(self):
-   #    ...
+   def __iter__(self):
+      yield from GA(self, "imm")()
 
-   # def __reversed__(self):
-   #    ...
+   def __reversed__(self):
+      yield from reversed(GA(self, "imm")())
 
    def __divmod__(self, other):
       return (self / other, self % other)
@@ -56,15 +55,14 @@ class LzValue(Generic[T]):
    def __rdivmod__(self, other):
       return (GA(self, "__rdiv__")(other), GA(self, "__rmod__")(other))
 
-   #############################################################################
-   # Codegen Below :(                                                          #
-   #############################################################################
-      # if you call any of these methods, it evaluates the lazy value immediately
+################################################################################
+# Codegen Below :(                                                             #
+################################################################################
+   # if you call any of these methods, it evaluates the lazy value immediately
    __immediate_methods__ = (
       "__repr__", "__str__", "__bytes__", "__format__", "__hash__", "__bool__",
       "__dir__", "__isinstance__", "__len__", "__length_hint__", "__contains__",
       "__enter__", "__exit__", "__buffer__", "__release_buffer__", "__await__",
-      "__iter__", "__reversed__", # too lazy to do these two
    )
    for name in __immediate_methods__:
       exec(""
@@ -84,8 +82,8 @@ class LzValue(Generic[T]):
       "RRShift,<<,r", "And,&,l", "RAnd,&,r", "Xor,^,l", "RXor,^,r", "Or,|,l",
       "ROr,|,r",
    )
-   for pair in __operators__:
-      name, op, lr = pair.split(",")
+   for s in __operators__:
+      name, op, lr = s.split(",")
       realname = f"__{name.lower()}__"
       exec(""
          + f"def {realname}(self, other):\n"
